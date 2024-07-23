@@ -22,8 +22,15 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-
       - name: Setup Maven Action
         uses: s4u/setup-maven-action@v1.14.0
       # 执行打包
       - run: mvn clean package
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: my-artifact
+          path: home/runner/work/software-testing/software-testing/target
+      - name: Display structure of downloaded files
+        run: ls -R home/runner/work/software-testing/software-testing/target
+        

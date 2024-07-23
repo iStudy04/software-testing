@@ -24,6 +24,6 @@ jobs:
     steps:
 
       - name: Setup Maven Action
-        uses: s4u/setup-maven-action@< version >
-
+        uses: s4u/setup-maven-action@v1.14.0
+            
       - run: mvn -V ...

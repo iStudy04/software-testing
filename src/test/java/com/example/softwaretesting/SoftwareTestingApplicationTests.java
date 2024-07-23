@@ -40,6 +40,7 @@ class SoftwareTestingApplicationTests {
                 .getResponse()
                 .getContentAsString(Charset.defaultCharset());
 
+        System.out.println(jsonResponse);
         Student student = jacksonObjectMapper.readValue(jsonResponse, Student.class);
 
         // 进行断言

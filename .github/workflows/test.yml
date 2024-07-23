@@ -25,5 +25,5 @@ jobs:
 
       - name: Setup Maven Action
         uses: s4u/setup-maven-action@v1.14.0
-            
-      - run: mvn -V ...
+      # 执行打包
+      - run: mvn clean package

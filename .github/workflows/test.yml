@@ -1,36 +1,48 @@
-# This is a basic workflow to help you get started with Actions
+name: Build and Package Spring Boot Project
 
-name: CI
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Setup Maven Action
-        uses: s4u/setup-maven-action@v1.14.0
-      # 执行打包
-      - run: mvn clean package
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - uses: actions/download-artifact@v4
-        with:
-          name: my-artifact
-          path: home/runner/work/software-testing/software-testing/target
-      - name: Display structure of downloaded files
-        run: ls -R home/runner/work/software-testing/software-testing/target
-        
+    - name: Set up JDK 11
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '11'
+
+    - name: Cache Maven packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    - name: Build with Maven
+      run: mvn clean package
+
+    - name: Archive test results
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: test-results
+        path: target/surefire-reports/
+
+    - name: Archive jar file
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: application-jar
+        path: target/*.jar
